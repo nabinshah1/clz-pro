@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { products } from "../assets/assets"; // Assuming you have products data imported
 import { toast } from "react-toastify";
 import Product from "../pages/Product";
+import { useNavigate } from "react-router-dom";
 
 // Create the context
 export const ShopContext = createContext();
@@ -10,9 +11,12 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
   const currency = "$";
   const delivery_fee = 10;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItem, setCartItem] = useState({});
+  const [token,setToken]=useState('')
+  const navigate=useNavigate();
 
   // Add item to cart with size validation
   const addToCart = async (itemId, size) => {
@@ -75,6 +79,13 @@ const ShopContextProvider = (props) => {
     }
 return totalAmount;
   }
+  useEffect(()=>{
+    if (!token && localStorage.getItem('token')) {
+      setToken( localStorage.getItem('token'))
+      
+    }
+
+  },[])
 
   // Context values to share
   const value = {
@@ -90,6 +101,9 @@ return totalAmount;
     getCartCount,
     updateQuantity,
     getCartAmount,
+    navigate,
+    backendUrl,
+    setToken,token
   };
 
   return (

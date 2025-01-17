@@ -3,10 +3,17 @@ import { assets } from '../assets/assets';
 import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../Context/ShopContext';
-
+import { IoHome } from "react-icons/io5";
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const{setShowSearch,getCartCount}=useContext(ShopContext)
+  const{setShowSearch,getCartCount, navigate, token,setToken, setCartItem }=useContext(ShopContext);
+  const logout = ()=>{
+    navigate("/login")
+    localStorage.removeItem('token')
+    setToken('')
+    setCartItem({})
+    
+  }
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -23,7 +30,7 @@ const Navbar = () => {
             : "flex flex-row items-center gap-1 hover:text-purple-700"
         }
       >
-        <p>Home</p>
+        <p> Home</p>
         <hr className="w-full border-none h-[1.5px] bg-gray-700" />
       </NavLink>
   <NavLink
@@ -67,16 +74,41 @@ const Navbar = () => {
 
         {/* Profile Dropdown */}
         <div className="group relative">
-          <img className="w-5 cursor-pointer" src={assets.profile_icon} alt="Profile Icon" />
-          
-          <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-10">
-            <div className="flex flex-col gap-2 w-36 py-5 bg-slate-100 text-gray-500 rounded">
-              <p className="cursor-pointer hover:text-black">My Profile</p>
-              <p className="cursor-pointer hover:text-black">Orders</p>
-              <p className="cursor-pointer hover:text-black">Logout</p>
-            </div>
-          </div>
-        </div>
+  {/* Profile Icon */}
+  <img
+    onClick={() => (token ? null : navigate('/login'))}
+    className="w-5 cursor-pointer"
+    src={assets.profile_icon}
+    alt="Profile Icon"
+  />
+
+  {/* Dropdown Menu - Visible only when user is logged in */}
+  {token && (
+    <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-10">
+      <div className="flex flex-col gap-2 w-36 py-5 bg-slate-100 text-gray-500 rounded">
+        <p
+          onClick={() => navigate('/profile')}
+          className="cursor-pointer hover:text-black"
+        >
+          My Profile
+        </p>
+        <p
+          onClick={() => navigate('/orders')}
+          className="cursor-pointer hover:text-black"
+        >
+          Orders
+        </p>
+        <p
+          onClick={() => logout()}
+          className="cursor-pointer hover:text-black"
+        >
+          Logout
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+
 
         {/* Cart Icon */}
         <Link to="/cart" className="relative">
